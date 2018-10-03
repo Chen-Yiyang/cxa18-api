@@ -277,23 +277,20 @@ def links_titles():
         tmp = update_websites(related_websites, True, (totalscore>50))
         suggestions = related_urls[0:1]
 
-        
-        
     
-    
-    resp = {
-        "score": totalscore,
-        "format": score1,
-        "sentiment": score2,
-        "retweet": ratio4,
-        "author": score6,
-        "similarity": score7,
-        "url1": suggestions[0]["url"],
-        "title1":suggestions[0]['title'],
-        "url2": suggestions[1]["url"],
-        "title2":suggestions[1]['title']
-        }
-    return jsonify(resp)
+##    resp = {
+##        "score": totalscore,
+##        "format": score1,
+##        "sentiment": score2,
+##        "retweet": ratio4,
+##        "author": score6,
+##        "similarity": score7,
+##        "url1": suggestions[0]["url"],
+##        "title1":suggestions[0]['title'],
+##        "url2": suggestions[1]["url"],
+##        "title2":suggestions[1]['title']
+##        }
+    return jsonify(suggestions)
 
     
 if __name__ == "__main__":
