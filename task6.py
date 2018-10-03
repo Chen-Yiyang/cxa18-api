@@ -39,6 +39,27 @@ def author_authentification(user_id):
         return 5
 
 
+##
+###==============================
+### task 6 Author auth.
+###==============================
+##
+##@app.route("/authorauth", methods=['POST'])
+##def authorauth():
+##    """
+##    able to pass in the author_id,
+##    find out his/her follower number,
+##    & return a value showing his/her influence/credibility
+##    """
+##    data = request.data
+##    dataDict = json.loads(data)
+##    author_id = dataDict['author_id']
+##
+##    score = author_authentification(author_id)
+##    resp = {'task6_score': score}
+##    return jsonify(resp)
+
+
 ### mainer_id = "265902729" # for testing now
 ##print(author_authentification(user_id))
 

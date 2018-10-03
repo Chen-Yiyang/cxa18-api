@@ -5,11 +5,19 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Float
 import os, sys, math
 
+from task12 import *
+from task4 import *
+from task6 import *
+from task7 import *
+from scale7 import *
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+
+
 
 
 # models
@@ -42,9 +50,6 @@ def another():
     name = dataDict['name']
     resp = {'one':'hello' + name}
     return jsonify(resp)
-
-
-from task12 import *
 
 
 #==============================
@@ -95,37 +100,13 @@ def userfeedback():
             db.session.rollback()
             raise
 
-    return ('', 204) # empty response
-        
-    
-
-#==============================
-# task 6 Author auth.
-#==============================
-from task6 import *
-
-@app.route("/authorauth", methods=['POST'])
-def authorauth():
-    """
-    able to pass in the author_id,
-    find out his/her follower number,
-    & return a value showing his/her influence/credibility
-    """
-    data = request.data
-    dataDict = json.loads(data)
-    author_id = dataDict['author_id']
-
-    score = author_authentification(author_id)
-    resp = {'task6_score': score}
-    return jsonify(resp)
+    return ('', 204) # empty response    
 
 
 #==============================
 # task 7 Similar news
 #==============================
 # import methods for keyword extration, similar news article search & global rank
-from task7 import *
-from scale7 import *
 
 # task 7 etc.
 def update_websites(similar_articles, is_update, is_credible):
@@ -199,24 +180,10 @@ def update_websites(similar_articles, is_update, is_credible):
     return score7
 
 
-
-#==============================
-# task 4 Retweet number
-#==============================
-def retweet_influence(retweets):
-    """
-    The more retweets, the less the result (i.e. the multiplier/ratio) will be
-    rationale: the more influence a tweet has (in terms of retweets), the more cautious readers should be while handling it
-    the ratio is [0.8, 1.0]
-    """
-    ratio = 0.2 * math.exp(-0.001*retweets) + 0.8
-
-    return ratio
     
 #==============================
 # main API is here
 #==============================
-
 @app.route('/linkandtitle', methods=['POST'])
 def links_titles():
     """the main part of the API"""
@@ -228,13 +195,14 @@ def links_titles():
     retweets = int(dataDict['retweets'])
     title = dataDict['title']
 
-    # task 1 format Check
-    score1 = format_check(title)    # out of 15
+    # get the keywords of the text, from functions imported from task12
+    keywords = scrap_entities(title)
 
+    # task 1 format Check
+    score1 = format_check(keywords)    # out of 15
 
     # task 2 sentiment Check
     score2 = sentiment_check(title) # out of 15
-
 
     # task 4 retweet number (overarching)
     ratio4 = retweet_influence(retweets)    # [0.8, 1.0]
@@ -244,8 +212,6 @@ def links_titles():
 
     
     # task 7 Similar News
-    # extract keywords
-    keywords = keywords_extraction(title)
     # find related news
     related_websites, related_urls, similarNotFound = related_news(keywords)
     if author_id == "232901331":
@@ -277,11 +243,28 @@ def links_titles():
 
     totalscore = (score1 + score2 + score6 + score7 + score10) * ratio4
 
+##    if similarNotFound:
+##        suggestions = [
+##            {
+##                'url': '',
+##                'title': ''},
+##            {
+##                'url': '',
+##                'title': ''},
+##            ]
+##    elif len(related_urls) == 1:
+##        
+##        suggestions = []
+##        suggestions.append(related_rul[0])
+##        suggestions.append({
+##                'url': '',
+##                'title': ''}
+##             )
+##    else:
+##        tmp = update_websites(related_websites, True, (totalscore>50))
+##        suggestions = related_urls[0:1]
+    
     if not similarNotFound:
-        tmp = update_websites(related_websites, True, (totalscore>50))
-        suggestions = related_urls[0:2]
-    else:
-        # empty dict for suggestion
         suggestions = [
             {
                 'url': '',
@@ -290,6 +273,12 @@ def links_titles():
                 'url': '',
                 'title': ''},
             ]
+    else:
+        tmp = update_websites(related_websites, True, (totalscore>50))
+        suggestions = related_urls[0:1]
+
+        
+        
     
     
     resp = {
@@ -305,99 +294,6 @@ def links_titles():
         "title2":suggestions[1]['title']
         }
     return jsonify(resp)
-
-
-#==============================
-# main API w. suggestion links
-#==============================
-@app.route('/withlinks', methods=['POST'])
-def withlinks():
-    """the main part of the API"""
-
-    # get request data
-    data = request.data
-    dataDict = json.loads(data)
-    author_id = dataDict['id']
-    retweets = int(dataDict['retweets'])
-    title = dataDict['title']
-
-    # task 1 format Check
-    score1 = format_check(title)    # out of 15
-
-
-    # task 2 sentiment Check
-    score2 = sentiment_check(title) # out of 15
-
-
-    # task 4 retweet number (overarching)
-    ratio4 = retweet_influence(retweets)    # [0.8, 1.0]
-
-    # task 6 Author Authentification
-    score6 = author_authentification(author_id) # out of 20
-
-    
-    # task 7 Similar News
-    # extract keywords
-    keywords = keywords_extraction(title)
-    # find related news
-    related_websites, related_urls, similarNotFound = related_news(keywords)
-    if author_id == "232901331":
-        score7 = 3.175676631
-    elif not similarNotFound:
-        # find score7
-        score7 = update_websites(related_websites, False, True) # out of 40
-        score7 = scaling7(score7)
-        # related_websites is called similar_articles later on in the method
-        # similarNotFound is true when theres no similar news found online
-    else:
-        score7 = 20
-
-    user = Users.query.filter(Users.user_id==author_id).first()
-    if user is not None:
-        report = int(user.report)
-        score6 = score6 + 2*(report**(1/3))
-        score6 = min(20, score6)
-        score6 = max(0, score6)
-
-        score7 = score7 * (1 + math.tanh(0.06*report))
-        score7 = min(38.1435335, score7)
-        score7 = max(0, score7)
-    
-    
-    # task 10 Snope
-    # TBC
-    score10 = 5 #   out of 10
-
-    totalscore = (score1 + score2 + score6 + score7 + score10) * ratio4
-
-    if not similarNotFound:
-        tmp = update_websites(related_websites, True, (totalscore>50))
-        suggestions = related_urls[0:2]
-    else:
-        # empty dict for suggestion
-        suggestions = [
-            {
-                'url': '',
-                'title': ''},
-            {
-                'url': '',
-                'title': ''},
-            ]
-    
-    
-    resp = {
-        "score": totalscore,
-        "format": score1,
-        "sentiment": score2,
-        "retweet": ratio4,
-        "author": score6,
-        "similarity": score7,
-        "url1": suggestions[0]["url"],
-        "url2": suggestions[1]["url"]
-        }
-    return jsonify(resp)
-
-
 
     
 if __name__ == "__main__":

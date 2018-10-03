@@ -10,12 +10,6 @@ import similarweb
 
 from task12 import *
 
-# extract keywords
-def keywords_extraction(text_str):
-    """extract keywords using the Dandelion API"""
-    return scrap_entities(text_str)
-
-
 # related news
 def related_news(keywords):
     """

@@ -20,9 +20,7 @@ ENTITY_URL1 = 'https://api.dandelion.eu/datatxt/nex/v1'
 ENTITY_URL2 = 'https://api.dandelion.eu/datatxt/sent/v1'
 
 
-#==============================
-# task1 form check
-#==============================
+# keyword extraction
 def get_entities(text, confidence=0.5, lang='en'):
     payload = {
         '$app_id': DANDELION_APP_ID,
@@ -43,8 +41,12 @@ def scrap_entities(text):
     entities= [entity.lower() for entity in entities]
     return entities
 
-def format_check(text):
-    return min(len(scrap_entities(text))*5,15)
+
+#==============================
+# task1 form check
+#==============================
+def format_check(keywords):
+    return min(len(keywords)*5,15)
 
 
 
