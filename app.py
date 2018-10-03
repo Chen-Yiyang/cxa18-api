@@ -273,7 +273,7 @@ def links_titles():
         "url2": suggestions[1]["url"],
         "title2":suggestions[1]['title']
         }
-    return jsonify(suggestions)
+    return jsonify(resp)
 
     
 if __name__ == "__main__":
