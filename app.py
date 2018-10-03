@@ -301,8 +301,8 @@ def links_titles():
         "similarity": score7,
         "url1": suggestions[0]["url"],
         "title1":suggestions[0]['title'],
-        "url2": suggestions[1]["url"]
-        "title2":suggestions[1]['title'],
+        "url2": suggestions[1]["url"],
+        "title2":suggestions[1]['title']
         }
     return jsonify(resp)
 
@@ -393,9 +393,7 @@ def withlinks():
         "author": score6,
         "similarity": score7,
         "url1": suggestions[0]["url"],
-        "title1":suggestions[0]['title'],
         "url2": suggestions[1]["url"]
-        "title2":suggestions[1]['title'],
         }
     return jsonify(resp)
 
