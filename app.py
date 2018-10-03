@@ -290,11 +290,10 @@ def links_titles():
         
         suggestions = []
         suggestions.append(related_rul[0])
-        suggestions.append(
-            [{
+        suggestions.append({
                 'url': '',
                 'title': ''}
-            ])
+             )
     else:
         tmp = update_websites(related_websites, True, (totalscore>50))
         suggestions = related_urls[0:1]
