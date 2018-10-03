@@ -277,11 +277,7 @@ def links_titles():
 
     totalscore = (score1 + score2 + score6 + score7 + score10) * ratio4
 
-    if not similarNotFound:
-        tmp = update_websites(related_websites, True, (totalscore>50))
-        suggestions = related_urls[0:2]
-    else:
-        # empty dict for suggestion
+    if similarNotFound:
         suggestions = [
             {
                 'url': '',
@@ -290,6 +286,20 @@ def links_titles():
                 'url': '',
                 'title': ''},
             ]
+    elif len(related_urls) == 1:
+        
+        suggestions = []
+        suggestions.append(related_rul[0])
+        suggestions.append(
+            [{
+                'url': '',
+                'title': ''}
+            ])
+    else:
+        tmp = update_websites(related_websites, True, (totalscore>50))
+        suggestions = related_urls[0:1]
+        
+        
     
     
     resp = {
