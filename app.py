@@ -242,27 +242,6 @@ def links_titles():
     score10 = 5 #   out of 10
 
     totalscore = (score1 + score2 + score6 + score7 + score10) * ratio4
-
-##    if similarNotFound:
-##        suggestions = [
-##            {
-##                'url': '',
-##                'title': ''},
-##            {
-##                'url': '',
-##                'title': ''},
-##            ]
-##    elif len(related_urls) == 1:
-##        
-##        suggestions = []
-##        suggestions.append(related_rul[0])
-##        suggestions.append({
-##                'url': '',
-##                'title': ''}
-##             )
-##    else:
-##        tmp = update_websites(related_websites, True, (totalscore>50))
-##        suggestions = related_urls[0:1]
     
     if similarNotFound:
         suggestions = [
@@ -275,21 +254,25 @@ def links_titles():
             ]
     else:
         tmp = update_websites(related_websites, True, (totalscore>50))
-        suggestions = related_urls[0:1]
+        if len(related_urls) == 1:
+            suggestions = related_urls[0:1]
+            suggestions.append({'url': '','title': ''})
+        else:
+            suggestions = related_urls[0:2]
 
     
-##    resp = {
-##        "score": totalscore,
-##        "format": score1,
-##        "sentiment": score2,
-##        "retweet": ratio4,
-##        "author": score6,
-##        "similarity": score7,
-##        "url1": suggestions[0]["url"],
-##        "title1":suggestions[0]['title'],
-##        "url2": suggestions[1]["url"],
-##        "title2":suggestions[1]['title']
-##        }
+    resp = {
+        "score": totalscore,
+        "format": score1,
+        "sentiment": score2,
+        "retweet": ratio4,
+        "author": score6,
+        "similarity": score7,
+        "url1": suggestions[0]["url"],
+        "title1":suggestions[0]['title'],
+        "url2": suggestions[1]["url"],
+        "title2":suggestions[1]['title']
+        }
     return jsonify(suggestions)
 
     
