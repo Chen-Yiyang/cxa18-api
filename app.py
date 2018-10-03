@@ -264,7 +264,7 @@ def links_titles():
 ##        tmp = update_websites(related_websites, True, (totalscore>50))
 ##        suggestions = related_urls[0:1]
     
-    if not similarNotFound:
+    if similarNotFound:
         suggestions = [
             {
                 'url': '',
