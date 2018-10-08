@@ -210,6 +210,28 @@ def links_titles():
     # task 6 Author Authentification
     score6 = author_authentification(author_id) # out of 20
 
+   #======================================================
+   #==================
+   # News Api
+   # https://newsapi.org/
+   #==================
+    
+   # pip install newsapi-python
+   from newsapi import NewsApiClient
+   # Init
+   newsapi = NewsApiClient(api_key='29053591a5264f74895c85755cc26afe')
+   #q --> keyword
+   top_headlines = newsapi.get_top_headlines(q='bitcoin')
+   print(top_headlines['totalResults'])
+   # not sure what kinds of information you need but this is how you can get the total number of top headlines with the word 'bitcoin' 
+   # using News Api. 
+   # can pass in more keywords like this q='bitcoin', 'business', 'money' etc
+   # Api also allows you to sort by data, relevance, popularity, author, title, image and content
+
+   #=======================================================
+    
+    
+    
     
     # task 7 Similar News
     # find related news
