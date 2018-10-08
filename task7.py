@@ -66,11 +66,15 @@ def web_traffic_track(website_tracked):
     domains = domains[-2:]
     website_tracked = '.'.join(domains)
 
-    API_URL = "https://api.similarweb.com/v1/website/{website}/global-rank/global-rank?api_key=a2f9ba0d39ac49e3b1735845d7915347&start_date=2018-06&end_date=2018-06" \
+    API_URL = "https://api.similarweb.com/v1/website/{website}/global-rank/global-rank?api_key=a2f9ba0d39ac49e3b1735845d7915347&start_date=2018-08&end_date=2018-08" \
               "&main_domain_only=false".format(website = website_tracked)
     
     response = requests.get(API_URL)
-    result = response.json()
-    rank = result['global_rank'][0]['global_rank'] # take Jun 18
+
+    if response.status_code != 200:
+        rank = 10000000
+    else:
+        result = response.json()
+        rank = result['global_rank'][0]['global_rank'] # take Jun 18
     
     return rank
